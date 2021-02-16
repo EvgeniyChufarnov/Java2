@@ -17,7 +17,7 @@ public class ComputeArrayTask extends RecursiveAction {
     @Override
     protected void compute() {
         if ((end - start) < THRESHOLD) {
-            for (int i = start; i < end; i++) {
+            for (int i = start; i < end + 1; i++) {
                 data[i] = (float)(data[i] * Math.sin(0.2f + i / 5) * Math.cos(0.2f + i / 5) * Math.cos(0.4f + i / 2));
             }
         } else {

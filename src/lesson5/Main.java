@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.concurrent.ForkJoinPool;
 
 public class Main {
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) {
         final int SIZE = 10_000_000;
         float[] array = new float[SIZE];
         float[] array1 = new float[SIZE];
@@ -14,7 +14,7 @@ public class Main {
         Arrays.fill(array2, 1f);
 
         long beginningTime = System.currentTimeMillis();
-        computeArray(array);
+        computeArray(array, 0);
         System.out.println("Compute Array time is " + (System.currentTimeMillis() - beginningTime));
 
         beginningTime = System.currentTimeMillis();
@@ -29,15 +29,15 @@ public class Main {
         System.out.println("Fork Join time time is " + (System.currentTimeMillis() - beginningTime));
     }
 
-    public static void computeArray(float[] arr) {
+    public static void computeArray(float[] arr, int n) {
         for (int i = 0; i < arr.length; i++) {
-            arr[i] = (float)(arr[i] * Math.sin(0.2f + i / 5) * Math.cos(0.2f + i / 5) * Math.cos(0.4f + i / 2));
+            arr[i] = (float)(arr[i] * Math.sin(0.2f + (i + n) / 5) * Math.cos(0.2f + (i + n) / 5) * Math.cos(0.4f + (i + n) / 2));
         }
     }
 
     public static void computeArrayWith2Threads(float[] arr) {
         if (arr.length < 2) {
-            computeArray(arr);
+            computeArray(arr, 0);
             return;
         }
 
@@ -46,13 +46,13 @@ public class Main {
         int middle = (start + end) / 2;
 
         float[] leftPart = new float[middle + 1];
-        float[] rightPart = new float[end - middle ];
+        float[] rightPart = new float[end - middle];
 
         System.arraycopy(arr, 0, leftPart, 0, leftPart.length);
         System.arraycopy(arr, middle + 1, rightPart, 0, rightPart.length);
 
-        Thread t1 = new Thread(() -> computeArray(leftPart));
-        Thread t2 = new Thread(() -> computeArray(rightPart));
+        Thread t1 = new Thread(() -> computeArray(leftPart, 0));
+        Thread t2 = new Thread(() -> computeArray(rightPart, middle + 1));
 
         t1.start();
         t2.start();
